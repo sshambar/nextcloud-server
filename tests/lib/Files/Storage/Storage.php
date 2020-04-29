@@ -88,6 +88,19 @@ abstract class Storage extends \Test\TestCase {
 		}
 		$this->assertEquals([$directory], $content);
 
+		$content = iterator_to_array($this->instance->getDirectoryContent('/'));
+
+		$this->assertCount(1, $content);
+		$this->assertEquals([
+			'name' => $directory,
+			'mimetype' => $this->instance->getMimeType($directory),
+			'mtime' => $this->instance->filemtime($directory),
+			'size' => -1,
+			'etag' => $content[0]['etag'], // random, so can't really check this
+			'storage_mtime' => $this->instance->filemtime($directory),
+			'permissions' => $this->instance->getPermissions($directory),
+		], $content[0]);
+
 		$this->assertFalse($this->instance->mkdir('/' . $directory)); //can't create existing folders
 		$this->assertTrue($this->instance->rmdir('/' . $directory));
 
